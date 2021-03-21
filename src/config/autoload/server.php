@@ -26,10 +26,28 @@ return [
                 Event::ON_REQUEST => [Hyperf\HttpServer\Server::class, 'onRequest'],
             ],
         ],
+        [
+            'name' => 'tcp',
+            'type' => Server::SERVER_BASE,
+            'host' => '0.0.0.0',
+            'port' => 9502,
+            'sock_type' => SWOOLE_SOCK_TCP,
+            'callbacks' => [
+                Event::ON_RECEIVE => [App\Controller\TarsTcpServer::class, 'onReceive'],
+            ],
+            'settings' => [
+                // 按需配置
+                'package_length_type' => 'N',
+                'open_length_check' => 1,
+                'package_length_offset' => 0,
+                'package_body_offset' => 0,
+                'package_max_length' => 2000000,
+            ],
+        ],
     ],
     'settings' => [
         Constant::OPTION_ENABLE_COROUTINE => true,
-        Constant::OPTION_WORKER_NUM => swoole_cpu_num(),
+        Constant::OPTION_WORKER_NUM => 5, //swoole_cpu_num(),
         Constant::OPTION_PID_FILE => BASE_PATH . '/runtime/hyperf.pid',
         Constant::OPTION_OPEN_TCP_NODELAY => true,
         Constant::OPTION_MAX_COROUTINE => 100000,

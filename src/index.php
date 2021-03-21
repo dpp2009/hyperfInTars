@@ -22,7 +22,7 @@ if( $commend=='stop' ){
 }
 
 function start($bin,$logFile){
-    $cmd = "/usr/bin/php " . $bin . "start > $logFile 2>&1 & ";
+    $cmd = "/usr/bin/php -d swoole.use_shortname=Off " . $bin . "start > $logFile 2>&1 & ";
     exec($cmd, $output, $r);
 }
 
@@ -47,7 +47,16 @@ function stop($name){
 
 function getProcess($processName)
 {
-    $cmd = "ps aux | grep '" . $processName . "' | grep -v grep  | awk '{ print $2}'";
+    $cmd = "ps aux | grep '" . $processName . "' | grep Master | grep -v grep  | awk '{ print $2}'";
+    exec($cmd, $ret);
+
+    $cmd = "ps aux | grep '" . $processName . "' | grep Manager | grep -v grep  | awk '{ print $2}'";
+    exec($cmd, $ret);
+
+    $cmd = "ps aux | grep '" . $processName . "' | grep Worker | grep -v grep  | awk '{ print $2}'";
+    exec($cmd, $ret);
+
+    $cmd = "ps aux | grep '" . $processName . "' | grep Task | grep -v grep  | awk '{ print $2}'";
     exec($cmd, $ret);
 
     if (empty($ret)) {

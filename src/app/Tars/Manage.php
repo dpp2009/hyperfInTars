@@ -24,6 +24,16 @@ class Manage
         }
     }
 
+    public function getAdapterObjs(){
+        $adapterObjs = [];
+        $conf = $this->getTarsConf();
+        $adapters = $conf['tars']['application']['server']['adapters'];
+        foreach ( $adapters as $adapter ){
+            $adapterObjs[] = $adapter['adapterName'];
+        }
+        return $adapterObjs;
+    }
+
     public function getTarsConf(){
         $tars_conf = dirname(BASE_PATH,2).'/conf/'.env('APP_NAME').'.config.conf';
 
@@ -38,14 +48,6 @@ class Manage
 
     public function keepAlive()
     {
-        $pname = env('APP_NAME');
-        $pname = explode('.',$pname);
-
-        $adapter = env('APP_NAME').'.objAdapter';
-        $application = $pname[0];
-        $serverName = $pname[1];
-        $masterPid = getmypid();
-
         $nodeInfo = $this->getNodeInfo();
         if( empty($nodeInfo) ){
             var_dump('keepAlive getNodeInfo fail');
@@ -55,21 +57,24 @@ class Manage
         $port = $nodeInfo['port'];
         $objName = $nodeInfo['objName'];
 
-        $serverInfo = new ServerInfo();
-        $serverInfo->adapter = $adapter;
-        $serverInfo->application = $application;
-        $serverInfo->serverName = $serverName;
-        $serverInfo->pid = $masterPid;
+        $pname = env('APP_NAME');
+        $pname = explode('.',$pname);
+        $application = $pname[0];
+        $serverName = $pname[1];
+        $masterPid = getmypid();
 
-        $serverF = new ServerFSync($host, $port, $objName);
-        $serverF->keepAlive($serverInfo);
+        $adapterObjs = $this->getAdapterObjs();
+        $adapterObjs[] = 'AdminAdapter';
+        foreach ($adapterObjs as $adapter){
+            $serverInfo = new ServerInfo();
+            $serverInfo->adapter = $adapter;
+            $serverInfo->application = $application;
+            $serverInfo->serverName = $serverName;
+            $serverInfo->pid = $masterPid;
 
-        $adminServerInfo = new ServerInfo();
-        $adminServerInfo->adapter = 'AdminAdapter';
-        $adminServerInfo->application = $application;
-        $adminServerInfo->serverName = $serverName;
-        $adminServerInfo->pid = $masterPid;
-        $serverF->keepAlive($adminServerInfo);
+            $serverF = new ServerFSync($host, $port,$objName);
+            $serverF->keepAlive($serverInfo);
+        }
 
         var_dump(' keepalive ');
     }

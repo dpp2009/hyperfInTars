@@ -23,4 +23,14 @@ class IndexController extends AbstractController
             'message' => "Hello {$user}.",
         ];
     }
+    public function testRpc()
+    {
+        $config = new \Tars\client\CommunicatorConfig();
+        $config->setLocator('tars.tarsregistry.QueryObj@tcp -h 172.25.0.3 -p 17890');
+        $config->setModuleName('TestApp.HelloServer');
+        $config->setCharsetName('UTF-8');
+        $config->setSocketMode(2);
+
+        return [];
+    }
 }

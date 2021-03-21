@@ -1,0 +1,11 @@
+module testtafserviceservant
+{
+
+    interface TestTafService
+    {
+
+        void sayHelloWorld(string name, out string outGreetings);
+
+    };
+
+};

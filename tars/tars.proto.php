@@ -3,11 +3,11 @@
 return array(
     'appName' => 'PHPTest',
     'serverName' => 'hyperf',
-    'objName' => 'obj',
+    'objName' => 'rpcObj',
     'withServant' => true,//决定是服务端,还是客户端的自动生成
-    'jceFiles' => array(
-        'jce/example.jce'
+    'tarsFiles' => array(
+        './example.tars'
     ),
-    'srcPath' => '',//这里用来autoload
-    'namespace' => '',
+    'dstPath' => '../src/app/servant',//这里用来autoload
+    'namespacePrefix' => 'App\servant',
 );

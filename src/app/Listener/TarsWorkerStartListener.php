@@ -11,9 +11,6 @@ use Hyperf\Framework\Event\BeforeWorkerStart;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
-/**
- * @Listener
- */
 class TarsWorkerStartListener implements ListenerInterface
 {
     /**
